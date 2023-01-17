@@ -2578,6 +2578,13 @@ export class StudyViewPageStore
         this.clearSampleTreatmentFilters();
         this.clearSampleTreatmentGroupFilters();
         this.clearSampleTreatmentTargetFilters();
+        // TODO This is a addition to rescue reset of filters
+        // when hesitate mode is 'on' (no longer need to press
+        // the submit button).
+        // Disucuss better place with Bas and Aaron.
+        if (this.hesitateUpdate) {
+            this.filters = this.filtersProx;
+        }
     }
 
     @computed
