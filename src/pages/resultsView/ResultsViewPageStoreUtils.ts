@@ -11,9 +11,8 @@ import {
     PatientIdentifier,
     ReferenceGenomeGene,
     Sample,
+    StructuralVariant,
 } from 'cbioportal-ts-api-client';
-
-import { StructuralVariant } from 'cbioportal-ts-api-client';
 
 import { action, ObservableMap } from 'mobx';
 import AccessorsForOqlFilter, {
@@ -230,7 +229,7 @@ export function filterAndAnnotateStructuralVariants(
         customDriverBinary: boolean;
         customDriverTier?: string;
     }
-): FilteredAndAnnotatedStructuralVariantsReport<AnnotatedStructuralVariant> {
+): FilteredAndAnnotatedStructuralVariantsReport {
     const vus: AnnotatedStructuralVariant[] = [];
     const germline: AnnotatedStructuralVariant[] = [];
     const vusAndGermline: AnnotatedStructuralVariant[] = [];
@@ -816,39 +815,6 @@ export function createDiscreteCopyNumberDataKey(
     d: NumericGeneMolecularData | DiscreteCopyNumberData
 ) {
     return d.sampleId + '_' + d.molecularProfileId + '_' + d.entrezGeneId;
-}
-
-export function evaluateDiscreteCNAPutativeDriverInfo(
-    cnaDatum: CustomDriverNumericGeneMolecularData,
-    oncoKbDatum: IndicatorQueryResp | undefined | null | false,
-    customDriverAnnotationsActive: boolean,
-    customDriverTierSelection: ObservableMap<string, boolean> | undefined
-) {
-    const oncoKb = oncoKbDatum ? getOncoKbOncogenic(oncoKbDatum) : '';
-
-    // Set driverFilter to true when:
-    // (1) custom drivers active in settings menu
-    // (2) the datum has a custom driver annotation
-    const customDriverBinary: boolean =
-        (customDriverAnnotationsActive &&
-            cnaDatum.driverFilter === 'Putative_Driver') ||
-        false;
-
-    // Set tier information to the tier name when the tiers checkbox
-    // is selected for the corresponding tier of the datum in settings menu.
-    // This forces the CNA to be counted as a driver mutation.
-    const customDriverTier: string | undefined =
-        cnaDatum.driverTiersFilter &&
-        customDriverTierSelection &&
-        customDriverTierSelection.get(cnaDatum.driverTiersFilter)
-            ? cnaDatum.driverTiersFilter
-            : undefined;
-
-    return {
-        oncoKb,
-        customDriverBinary,
-        customDriverTier,
-    };
 }
 
 export function evaluateMutationPutativeDriverInfo(

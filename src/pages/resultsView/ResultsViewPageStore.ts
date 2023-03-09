@@ -83,7 +83,6 @@ import PdbHeaderCache from 'shared/cache/PdbHeaderCache';
 import {
     cancerTypeForOncoKb,
     evaluateDiscreteCNAPutativeDriverInfo,
-    evaluateMutationPutativeDriverInfo,
     existsSomeMutationWithAscnPropertyInCollection,
     fetchAllReferenceGenomeGenes,
     fetchCnaOncoKbDataForOncoprint,
@@ -113,6 +112,7 @@ import {
     mapSampleIdToClinicalData,
     ONCOKB_DEFAULT,
     buildProteinChange,
+    PUTATIVE_DRIVER,
 } from 'shared/lib/StoreUtils';
 import {
     CoverageInformation,
@@ -5141,7 +5141,7 @@ export class ResultsViewPageStore extends AnalysisStore
             return toAwait;
         },
         invoke: () => {
-            return Promise.resolve((structualVariant: StructuralVariant): {
+            return Promise.resolve((structuralVariant: StructuralVariant): {
                 oncoKb: string;
                 hotspots: boolean;
                 customDriverBinary: boolean;
@@ -5161,7 +5161,7 @@ export class ResultsViewPageStore extends AnalysisStore
                         Error
                     ) &&
                     getOncoKbStructuralVariantAnnotationForOncoprint(
-                        structualVariant
+                        structuralVariant
                     );
 
                 let oncoKb: string = '';
@@ -5171,8 +5171,9 @@ export class ResultsViewPageStore extends AnalysisStore
                 return {
                     oncoKb,
                     hotspots: false,
-                    customDriverBinary: false,
-                    customDriverTier: undefined,
+                    customDriverBinary:
+                        structuralVariant.driverFilter === PUTATIVE_DRIVER,
+                    customDriverTier: structuralVariant.driverTiersFilter,
                 };
             });
         },
