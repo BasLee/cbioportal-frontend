@@ -219,7 +219,8 @@ describe('oncoprint', function() {
     });
 
     describe('oql structural variant tracks', () => {
-        it('shows oql structural variant variations', function() {
+        beforeEach(() => {
+            // Build Struct Var OQL and place in the URL.
             const oql =
                 // Downstream KIAA1549 has 1 struct var event (0.1%):
                 'KIAA1549: FUSION::\n' +
@@ -250,9 +251,17 @@ describe('oncoprint', function() {
                 '&profileFilter=0' +
                 '&tab_index=tab_visualize';
 
-            goToUrlAndSetLocalStorageWithProperty(stuctVarUrl, true, {});
+            // Define a set of clinical tracks in the props so that changes here
+            // do not cause unnecessary differences in the screenshot test.
+            goToUrlAndSetLocalStorageWithProperty(stuctVarUrl, true, {
+                oncoprint_clinical_tracks_config_json: JSON.stringify(
+                    SERVER_CLINICAL_TRACK_CONFIG
+                ),
+            });
             waitForOncoprint(ONCOPRINT_TIMEOUT);
+        });
 
+        it('shows oql structural variant variations', function() {
             const res = checkOncoprintElement();
             assertScreenShotMatch(res);
         });
